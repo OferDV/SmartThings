@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Executable: devicetypes/smartthings/heimen-4-button-remote.src
-
-Name: heimen-4-button-remote.groovy
-SHA1-Digest: ff2ca8cfa2e87d72f499513e3d67b26d06712d2e
