@@ -18,27 +18,26 @@ import groovy.json.JsonOutput
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-	definition (name: "Heimen 4-button Remote", namespace: "smartthings", author: "SmartThings", ocfDeviceType: "x.com.st.d.remotecontroller", mcdSync: true, runLocally: false, executeCommandsLocally: false, mnmn: "SmartThings", vid: "generic-4-button") {
+	definition (name: "Heimen 4-button Remote", namespace: "smartthings", author: "OferDV", ocfDeviceType: "x.com.st.d.remotecontroller", mcdSync: true, runLocally: false, executeCommandsLocally: false, mnmn: "SmartThings", vid: "generic-4-button") {
 		capability "Actuator"
 		capability "Battery"
 		capability "Button"
 		//capability "Holdable Button"
 		capability "Configuration"
-		capability "Sensor"
+		//capability "Sensor"
 		capability "Health Check"
 
-		fingerprint inClusters: "0000, 0001, 0003, 1000, FD01", outClusters: "0003, 0004, 0006, 0008, 0019, 0300, 1000", manufacturer: "LDS", model: "ZBT-CCTSwitch-D0001", deviceJoinName: "EcoSmart Remote Control" //EcoSmart 4-button remote
+		fingerprint inClusters: "0000,0001,0003,0500", outClusters: "0003,0501", manufacturer: "HEIMAN", model: "RC-EM", deviceJoinName: "Heiman Remote Control" 
 	}
 
 	tiles {
 		standardTile("button", "device.button", width: 2, height: 2) {
 			state "default", label: "", icon: "st.unknown.zwave.remote-controller", backgroundColor: "#ffffff"
-			//state "button 1 pushed", label: "pushed #1", icon: "st.unknown.zwave.remote-controller", backgroundColor: "#00A0DC"
             
-            state "button 1", label: "1", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-			state "button 2", label: "2", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-			state "button 3", label: "3", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-			state "button 4", label: "4", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+            state "button 1", label: "Disarm", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+			state "button 2", label: "Arm Away", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+			state "button 3", label: "Arm Home", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+			state "button 4", label: "Panic", icon: "st.Weather.weather14", backgroundColor: "#79b821"
             
 		}
         
@@ -221,20 +220,23 @@ private Map getButtonEvent(Map descMap) {
 		// Create and send component event
         //log.debug "${device.displayName} buttonNumber: ${buttonNumber}"
         
-        //log.debug "Button ${state.lastScene} repeat ${state.repeatCount}x ${now()}"
-    if (state.lastScene == buttonNumber && (state.repeatCount < 5) && (now() - state.repeatStart < 3000))
+        //log.debug "LastButton ${state.lastbutton} repeat ${state.repeatCount}x ${state.repeatStart}"
+        //log.debug "CurrentButton ${buttonNumber} ${now()}"
+    if ( state.lastbutton == buttonNumber && (state.repeatCount < 6) && (now() - state.repeatStart < 30000))
     {
-    	//log.debug "repeat ${buttonNumber} repeat ${state.repeatCount}x ${now()}"
+    	
         state.repeatCount = state.repeatCount + 1
+        log.debug "repeat ${buttonNumber} repeat ${state.repeatCount}x ${now()}"
         createEvent([:])
     }
     else
     {
 
     	// If the button was really pressed, store the new scene and handle the button press
-        //log.debug "his appears to be a valid press of button: ${buttonNumber}"
+        log.debug "his appears to be a valid press of button: ${buttonNumber}"
 
-        state.lastScene = buttonNumber
+		//state.lastScene = state.id
+        state.lastbutton = buttonNumber
         state.lastLevel = 0
         state.repeatCount = 0
         state.repeatStart = now()
